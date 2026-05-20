@@ -1,0 +1,8 @@
+local_run.sh
+local_setup.sh
+.venv
+*__pycache__/
+*.pyc
+local_testing.sh
+migrations/
+*.log

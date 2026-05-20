@@ -1,0 +1,44 @@
+from application.database import db
+import datetime
+
+class Users(db.Model):
+    user_id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)#why 100?
+    password = db.Column(db.String(225), nullable=False)
+    role = db.Column(db.Enum('admin', 'user', 'staff', name='user_roles'), nullable=False, default='user')
+    contact = db.Column(db.String(15))
+    status = db.Column(db.Enum('active', 'inactive', name='user_status'), nullable=False, default='active')
+    created_at = db.Column(db.DateTime(), nullable=False)
+
+class Treks(db.Model):
+    trek_id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    trek_name = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(100), nullable=False)
+    difficulty = db.Column(db.Enum('easy', 'moderate', 'hard', name='dificulty_levels'), nullable=False)
+    duration = db.Column(db.Integer(), nullable=False)
+    available_slots= db.Column(db.Integer(), nullable=False, default=0)
+    status = db.Column(db.Enum('Complete', 'Ongoing','pending','open', 'closed', name='trek_status'), nullable=False, default='pending')
+    start_date = db.Column(db.DateTime(), nullable=False)
+    end_date = db.Column(db.DateTime(), nullable=False)
+    created_at = db.Column(db.DateTime(), nullable=False)
+    created_by = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False)
+
+class StaffAssignments(db.Model):
+    assignment_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    staff_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False, unique=True)
+    trek_id = db.Column(db.Integer(), db.ForeignKey('treks.trek_id'), nullable=False, unique=True)
+    assigned_at = db.Column(db.DateTime(), nullable=False, default=datetime.datetime.utcnow)
+
+class Bookings(db.Model):
+    booking_id = db.Column(db.Integer(), primary_key = True, autoincrement=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False)
+    trek_id = db.Column(db.Integer(), db.ForeignKey('treks.trek_id'), nullable=False)
+    booking_date = db.Column(db.DateTime(), nullable=False, default=datetime.datetime.utcnow)
+    status = db.Column(db.Enum('confirmed', 'cancelled', 'booked', name='booking_status'), nullable=False, default='booked')
+
+class blacklist(db.Model):
+    blacklist_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False, unique=True)
+    reason = db.Column(db.String(255), nullable=False)
+    blacklisted_at = db.Column(db.DateTime(), nullable=False, default=datetime.datetime.utcnow)
