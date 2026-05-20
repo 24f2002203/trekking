@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from application.database import db
 from application.config import LocalDevelopmentConfig, TestingConfig, LocalConfig
 
+
 logging.basicConfig(filename='debug.log', level = logging.DEBUG, format = "%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
 
 def create_app():
@@ -31,7 +32,9 @@ def create_app():
         app.config.from_object(LocalDevelopmentConfig)
 
     db.init_app(app)
-    migrate = Migrate(app, db) 
+    Migrate(app, db) 
+    with app.app_context():
+        from application.models import Users, Treks, StaffAssignments, Bookings, blacklist
     return app 
 
 app = create_app()
