@@ -2,6 +2,7 @@ import os, logging
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_bcrypt import Bcrypt
 from application.database import db
 from application.config import LocalDevelopmentConfig, TestingConfig, LocalConfig
 
@@ -32,6 +33,7 @@ def create_app():
         app.config.from_object(LocalDevelopmentConfig)
 
     db.init_app(app)
+    bcrypt = Bcrypt(app)
     Migrate(app, db) 
     with app.app_context():
         from application.models import Users, Treks, StaffAssignments, Bookings, blacklist
@@ -42,4 +44,4 @@ app = create_app()
 from application.controllers import *
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='127.0.0.1', port=5000)

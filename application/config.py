@@ -15,6 +15,7 @@ class BaseConfig:
     DEBUG=False 
     SQLITE_DB_DIR = None 
     SQLALCHEMY_DATABASE_URI = None 
+    SECRET_KEY = '47484946464241'
 
 class LocalDevelopmentConfig(BaseConfig):
     DEBUG=True 
