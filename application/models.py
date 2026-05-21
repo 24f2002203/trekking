@@ -1,7 +1,15 @@
+from flask_security import UserMixin, RoleMixin
 from application.database import db
 import datetime
 
-class Users(db.Model):
+class RolesUsers(db.Model):
+    __tablename__ = 'roles_users'
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'))
+    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id'))
+
+class Users(db.Model, UserMixin):
+    __tablename__ = 'users'
     user_id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)#why 100?
@@ -12,6 +20,7 @@ class Users(db.Model):
     created_at = db.Column(db.DateTime(), nullable=False)
 
 class Treks(db.Model):
+    __tablename__ = 'treks'
     trek_id = db.Column(db.Integer(), primary_key=True, nullable=False)
     trek_name = db.Column(db.String(100), nullable=False)
     location = db.Column(db.String(100), nullable=False)
@@ -25,12 +34,14 @@ class Treks(db.Model):
     created_by = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False)
 
 class StaffAssignments(db.Model):
+    __tablename__ = 'staff_assignments'
     assignment_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     staff_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False, unique=True)
     trek_id = db.Column(db.Integer(), db.ForeignKey('treks.trek_id'), nullable=False, unique=True)
     assigned_at = db.Column(db.DateTime(), nullable=False, default=datetime.datetime.utcnow)
 
 class Bookings(db.Model):
+    __tablename__ = 'bookings'
     booking_id = db.Column(db.Integer(), primary_key = True, autoincrement=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False)
     trek_id = db.Column(db.Integer(), db.ForeignKey('treks.trek_id'), nullable=False)
@@ -38,6 +49,7 @@ class Bookings(db.Model):
     status = db.Column(db.Enum('confirmed', 'cancelled', 'booked', name='booking_status'), nullable=False, default='booked')
 
 class blacklist(db.Model):
+    __tablename__ = 'blacklist'
     blacklist_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False, unique=True)
     reason = db.Column(db.String(255), nullable=False)
