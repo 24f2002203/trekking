@@ -6,3 +6,4 @@ local_setup.sh
 local_testing.sh
 migrations/
 *.log
+.env

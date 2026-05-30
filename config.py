@@ -15,7 +15,10 @@ class BaseConfig:
     DEBUG=False 
     SQLITE_DB_DIR = None 
     SQLALCHEMY_DATABASE_URI = None 
-    SECRET_KEY = '47484946464241'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False 
+    SECURITY_REGISTERABLE = True 
 
 class LocalDevelopmentConfig(BaseConfig):
     DEBUG=True 

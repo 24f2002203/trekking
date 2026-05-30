@@ -3,6 +3,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
+from flask_security import Security, SQLAlchemySessionUserDatastore
 from application.database import db
 from application.config import LocalDevelopmentConfig, TestingConfig, LocalConfig
 
@@ -36,7 +37,10 @@ def create_app():
     bcrypt = Bcrypt(app)
     Migrate(app, db) 
     with app.app_context():
-        from application.models import Users, Treks, StaffAssignments, Bookings, blacklist
+        from application.models import Users, Treks, StaffAssignments, Bookings, blacklist, Roles, RolesUsers
+
+    user_datastore = SQLAlchemySessionUserDatastore(db.session, Users, Roles)
+    security = Security(app, user_datastore)
     return app 
 
 app = create_app()
