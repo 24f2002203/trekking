@@ -1,12 +1,18 @@
 from flask_security import UserMixin, RoleMixin
-from application.database import db
-import datetime
+import datetime, os, sys, uuid
+from database import db
 
 class RolesUsers(db.Model):
     __tablename__ = 'roles_users'
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'))
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id'))
+
+class Roles(db.Model, RoleMixin):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    description = db.Column(db.String(255), nullable=True)
 
 class Users(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -18,6 +24,7 @@ class Users(db.Model, UserMixin):
     contact = db.Column(db.String(15))
     status = db.Column(db.Enum('active', 'inactive', name='user_status'), nullable=False, default='active')
     created_at = db.Column(db.DateTime(), nullable=False)
+    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False, default=lambda:str(uuid.uuid4()))
 
 class Treks(db.Model):
     __tablename__ = 'treks'

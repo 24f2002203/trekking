@@ -4,8 +4,9 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_security import Security, SQLAlchemySessionUserDatastore
-from application.database import db
-from application.config import LocalDevelopmentConfig, TestingConfig, LocalConfig
+from database import db
+from config import LocalDevelopmentConfig, TestingConfig, LocalConfig
+from apps import register_blueprints
 
 
 logging.basicConfig(filename='debug.log', level = logging.DEBUG, format = "%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
@@ -37,7 +38,7 @@ def create_app():
     bcrypt = Bcrypt(app)
     Migrate(app, db) 
     with app.app_context():
-        from application.models import Users, Treks, StaffAssignments, Bookings, blacklist, Roles, RolesUsers
+        from core.models import Users, Treks, StaffAssignments, Bookings, blacklist, Roles, RolesUsers
 
     user_datastore = SQLAlchemySessionUserDatastore(db.session, Users, Roles)
     security = Security(app, user_datastore)
@@ -45,7 +46,11 @@ def create_app():
 
 app = create_app()
 
-from application.controllers import *
+register_blueprints(app)
+
+@app.route('/')
+def index(): 
+    return {"message":"App the is running!"}
 
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1', port=5000)
