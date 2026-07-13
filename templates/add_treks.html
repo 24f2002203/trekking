@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a trek</title>
+</head>
+<body>
+    <h1>Add a trek </h1>
+    <form method = 'POST'>
+        
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.user_name.label }} 
+            {{ form.user_name(size=32) }}    
+        </p>
+
+            {{ form.trek_name.label }} 
+            {{ form.trek_name(size=32) }}    
+        </p>
+
+        <p>
+            {{ form.location.label }} 
+            {{ form.location(size=32) }}
+        </p>
+
+        <p>
+            {{ form.district.label }} 
+            {{ form.district(size=32) }}
+        </p>
+
+        <p>
+            {{ form.state.label }} 
+            {{ form.state(size=32) }}
+        </p>
+
+        <p>
+            {{ form.pincode.label }} 
+            {{ form.pincode(size=32) }}
+        </p>
+
+        <p>
+            {{ form.difficulty.label }} 
+            {{ form.difficulty(size=32, placeholder="Please select: easy, moderate, hard") }}
+        </p>
+
+        <p>
+            {{ form.duration.label }} 
+            {{ form.duration(size=32, placeholder="Please enter duration in days") }}    
+        </p>
+
+        <p>
+            {{ form.member_slots.label }} 
+            {{ form.member_slots(size=32, placeholder="solts should be greater than or equal to 10") }}
+        </p>
+
+        <p>
+            {{ form.status.label }} 
+            {{ form.status(size=32, placeholder = "Please enter: Complete, Ongoing, pending, open, closed") }}
+        </p>
+
+        <p>
+            {{ form.start_date.label }} 
+            {{ form.start_date(size=32) }}
+        </p>
+
+        <p>
+            {{ form.end_date.label }} 
+            {{ form.end_date(size=32) }}
+        </p>
+
+
+        <p>
+            {{ form.submit()}}
+        </p>
+    </form>
+</body>
+</html>

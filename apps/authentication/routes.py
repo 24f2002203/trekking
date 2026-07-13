@@ -39,11 +39,8 @@ def login():
                 flash(message)
                 return render_template('registration_form.html', form=form)
 
-            user_id = user.id
-
             role = User.role_name(user)
-            print(role)
-
+            
             if role == 'admin': 
                 return redirect(url_for('admin.dashboard'))
             elif role == 'staff':
@@ -92,20 +89,6 @@ def register(role):
                     app.user_datastore.add_role_to_user(user, role)
                     
                     db.session.commit()
-
-                    '''default_role = app.user_datastore.find_or_create_role(
-                        name = app.config['USER_ROLES'][role_key]['name']                    
-                        )
-                    db.session.commit()
-
-                    print(default_role)
-                    print(default_role.id)
-                    print(default_role.name)
-                    print(user)
-                    print(user.roles)
-
-                    user.roles.append(default_role)
-                    db.session.commit()'''
                     
                     return redirect(url_for('authentication.login'))
                 
