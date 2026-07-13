@@ -1,4 +1,4 @@
-from flask import Blueprint 
+from flask import Blueprint, render_template, redirect, url_for, flash
 
 blueprint = Blueprint(
     'staff', 
@@ -9,3 +9,7 @@ blueprint = Blueprint(
 @blueprint.route('/test')
 def test_staff(): 
     return {"message":"Staff route is working"} 
+
+@blueprint.route('/dashboard')
+def dashboard():
+    return render_template('staff_dashboard.html')

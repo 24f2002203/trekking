@@ -34,6 +34,10 @@ class User(db.Model, UserMixin):
     @classmethod
     def find_by_email(cls, _email: str) -> "User": 
         return cls.query.filter_by(email = _email).first()
+    
+    @classmethod
+    def role_name(cls, user):
+        return user.roles[0].name if user.roles else None
 
 
 class Treks(db.Model):

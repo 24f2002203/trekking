@@ -7,7 +7,7 @@ from flask_security.confirmable import generate_confirmation_link
 from database import db 
 from .registration_form import RegisterForm
 import uuid
-from datetime import datetime
+from datetime import datetime, UTC
 from core.models import User, Role
 
 
@@ -32,7 +32,7 @@ def login():
             email = form.email.data
             password = form.password.data 
 
-            user = User.query.filter_by(email==email).first()
+            user = User.query.filter(User.email == email).first()
 
             if not user: 
                 message = "User with this email does not exist. Please register first."
@@ -41,7 +41,8 @@ def login():
 
             user_id = user.id
 
-            role = user_id.roles[0].name if user_id else None 
+            role = User.role_name(user)
+            print(role)
 
             if role == 'admin': 
                 return redirect(url_for('admin.dashboard'))
@@ -68,8 +69,6 @@ def register(role):
     if role not in ['staff', 'user']: 
         return render_template('errors/404.html'), 404
 
-    role_key = role.upper()
-
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -85,9 +84,13 @@ def register(role):
                         email= form.email.data, 
                         password = hash_password(form.password.data),
                         contact = form.contact.data,
-                        created_at = datetime.utcnow(),
+                        created_at = datetime.now(UTC),
                         fs_uniquifier = str(uuid.uuid4())
                     )
+                    db.session.add(user)
+
+                    app.user_datastore.add_role_to_user(user, role)
+                    
                     db.session.commit()
 
                     '''default_role = app.user_datastore.find_or_create_role(
