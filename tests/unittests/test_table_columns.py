@@ -4,7 +4,7 @@ from sqlalchemy import inspect
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from app import app 
-from application.database import db 
+from database import db 
 
 @pytest.fixture()
 def inspector():
@@ -19,13 +19,12 @@ def get_columns(inspector, table_names):
 
 
 def test_users_columns(inspector):
-    columns = get_columns(inspector, 'users')
+    columns = get_columns(inspector, 'user')
 
-    assert 'user_id' in columns
+    assert 'id' in columns
     assert 'name' in columns
     assert 'email' in columns
     assert 'password' in columns
-    assert 'role' in columns
     assert 'contact' in columns
     assert 'status' in columns
     assert 'created_at' in columns
@@ -57,7 +56,7 @@ def test_bookings_columns(inspector):
     columns = get_columns(inspector, 'bookings')
 
     assert 'booking_id' in columns
-    assert 'user_id' in columns
+    assert 'id' in columns
     assert 'trek_id' in columns
     assert 'booking_date' in columns
     assert 'status' in columns
@@ -66,6 +65,6 @@ def test_blacklist_columns(inspector):
     columns = get_columns(inspector, 'blacklist')
 
     assert 'blacklist_id' in columns
-    assert 'user_id' in columns
+    assert 'id' in columns
     assert 'reason' in columns
     assert 'blacklisted_at' in columns

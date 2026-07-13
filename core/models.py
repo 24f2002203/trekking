@@ -2,29 +2,39 @@ from flask_security import UserMixin, RoleMixin
 import datetime, os, sys, uuid
 from database import db
 
-class RolesUsers(db.Model):
-    __tablename__ = 'roles_users'
-    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'))
-    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id'))
 
-class Roles(db.Model, RoleMixin):
-    __tablename__ = 'roles'
-    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    description = db.Column(db.String(255), nullable=True)
+roles_users = db.Table(
+"roles_users",
+db.Column("user_id", db.Integer(), db.ForeignKey("user.id")),
+db.Column("role_id", db.Integer(), db.ForeignKey("role.id"))
+)
 
-class Users(db.Model, UserMixin):
-    __tablename__ = 'users'
-    user_id = db.Column(db.Integer(), primary_key=True, nullable=False)
+
+class User(db.Model, UserMixin):
+    __tablename__ = 'user'
     name = db.Column(db.String(100), nullable=False)
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     email = db.Column(db.String(100), nullable=False, unique=True)#why 100?
     password = db.Column(db.String(225), nullable=False)
-    role = db.Column(db.Enum('admin', 'user', 'staff', name='user_roles'), nullable=False, default='user')
     contact = db.Column(db.String(15))
-    status = db.Column(db.Enum('active', 'inactive', name='user_status'), nullable=False, default='active')
     created_at = db.Column(db.DateTime(), nullable=False)
     fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False, default=lambda:str(uuid.uuid4()))
+    active = db.Column(db.Boolean(), default=True) 
+
+    roles = db.relationship(
+        "Role",
+        secondary=roles_users,
+        backref=db.backref("users", lazy="dynamic")
+    )
+
+    @classmethod
+    def find_by_id(cls, _id: int) -> "User": 
+        return cls.query.filter_by(id = _id).first()
+    
+    @classmethod
+    def find_by_email(cls, _email: str) -> "User": 
+        return cls.query.filter_by(email = _email).first()
+
 
 class Treks(db.Model):
     __tablename__ = 'treks'
@@ -38,26 +48,32 @@ class Treks(db.Model):
     start_date = db.Column(db.DateTime(), nullable=False)
     end_date = db.Column(db.DateTime(), nullable=False)
     created_at = db.Column(db.DateTime(), nullable=False)
-    created_by = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False)
+    created_by = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
 
 class StaffAssignments(db.Model):
     __tablename__ = 'staff_assignments'
     assignment_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    staff_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False, unique=True)
+    staff_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False, unique=True)
     trek_id = db.Column(db.Integer(), db.ForeignKey('treks.trek_id'), nullable=False, unique=True)
     assigned_at = db.Column(db.DateTime(), nullable=False, default=datetime.datetime.utcnow)
 
 class Bookings(db.Model):
     __tablename__ = 'bookings'
     booking_id = db.Column(db.Integer(), primary_key = True, autoincrement=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False)
+    id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
     trek_id = db.Column(db.Integer(), db.ForeignKey('treks.trek_id'), nullable=False)
     booking_date = db.Column(db.DateTime(), nullable=False, default=datetime.datetime.utcnow)
     status = db.Column(db.Enum('confirmed', 'cancelled', 'booked', name='booking_status'), nullable=False, default='booked')
 
-class blacklist(db.Model):
+class Blacklist(db.Model):
     __tablename__ = 'blacklist'
     blacklist_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.user_id'), nullable=False, unique=True)
+    id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False, unique=True)
     reason = db.Column(db.String(255), nullable=False)
     blacklisted_at = db.Column(db.DateTime(), nullable=False, default=datetime.datetime.utcnow)
+
+class Role(db.Model, RoleMixin):
+    __tablename__ = 'role'
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    description = db.Column(db.String(255), nullable=True)

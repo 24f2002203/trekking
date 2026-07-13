@@ -1,0 +1,51 @@
+from database import db 
+from app import create_app 
+from core.models import Role, User
+from flask_security.utils import hash_password 
+from datetime import datetime, UTC
+import uuid 
+
+def create_default_roles(user_datastore): 
+
+    roles = ['admin', 'staff', 'user']
+
+    for role in roles: 
+    
+        existing_role =  Role.query.filter(Role.name == role).first()
+
+        if not existing_role: 
+
+            new_role = Role(name=role)
+            db.session.add(new_role)
+
+    db.session.commit()
+
+def create_admin_account(user_datastore): 
+
+    existing_admin = User.query.join(User.roles).filter(Role.name == 'admin').first() 
+
+    if not existing_admin: 
+
+        admin_user = User(
+            name = 'Admin_user', 
+            email = 'admin@gmail.com',
+            password = hash_password('admin1234'),
+            contact = '1234567890', 
+            created_at = datetime.now(UTC),
+            fs_uniquifier = str(uuid.uuid4())
+        )
+
+        user_datastore.add_role_to_user(admin_user, "admin")
+        
+        db.session.add(admin_user)
+        db.session.commit()
+
+app = create_app()
+
+print("Creating default roles ... ")
+
+with app.app_context():
+    create_default_roles(app.user_datastore)
+    create_admin_account(app.user_datastore)
+
+print("Created Roles")

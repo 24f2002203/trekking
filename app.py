@@ -1,12 +1,16 @@
 import os, logging
-from flask import Flask
+from flask import Flask, session, send_from_directory
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-from flask_security import Security, SQLAlchemySessionUserDatastore
+from flask_security import SQLAlchemySessionUserDatastore
+from flask_security.models import fsqla_v3 as fsqla
+from flask_login import LoginManager
+from flask_mailman import Mail
 from database import db
 from config import LocalDevelopmentConfig, TestingConfig, LocalConfig
 from apps import register_blueprints
+from extensions import  security 
 
 
 logging.basicConfig(filename='debug.log', level = logging.DEBUG, format = "%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
@@ -37,20 +41,28 @@ def create_app():
     db.init_app(app)
     bcrypt = Bcrypt(app)
     Migrate(app, db) 
-    with app.app_context():
-        from core.models import Users, Treks, StaffAssignments, Bookings, blacklist, Roles, RolesUsers
+    
 
-    user_datastore = SQLAlchemySessionUserDatastore(db.session, Users, Roles)
-    security = Security(app, user_datastore)
+
+    with app.app_context():
+        from core.models import User, Treks, StaffAssignments, Bookings, Blacklist, Role
+
+        app.user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
+
+        '''login = LoginManager(app)
+        login.init_app(app)
+        login.login_view = 'authentication.login'
+        security.init_app(app, app.user_datastore)
+        Mail(app)'''
+
+        security.init_app(app, app.user_datastore)
+
+        register_blueprints(app)
+        
     return app 
 
 app = create_app()
 
-register_blueprints(app)
-
-@app.route('/')
-def index(): 
-    return {"message":"App the is running!"}
-
 if __name__ == '__main__':
+
     app.run(debug=True, host='127.0.0.1', port=5000)
