@@ -9,11 +9,8 @@
     <h1>Admin Dashboard</h1>
 
     <h3>Treks</h3>
-    <span>
-        <p><a href='/admin/add_treks'>Add trek</a></p>
-    </span>
-    <h4>All Treks</h4>
-    <p>Below is the list of all datas available in the system:</p>
+
+    <p>Total number of treks: {{ data|length }} </p>
 
     <table border = 1>
         <tr>
@@ -27,10 +24,11 @@
             <th>Trek Status</th>
             <th>Booking date</th>
             <th>Booking Status</th>
+            <th>Assigned Staff</th>
             <th>Actions</th>
         </tr>
     
-        {% for trek, booking in data %}
+        {% for trek, booking, staff_assignment, user in data %}
             <tr>
                 <td>{{ trek.trek_id }} </td>
                 <td>{{ trek.trek_name }}</td>
@@ -42,9 +40,142 @@
                 <td>{{ trek.status }}</td>
                 <td>{{ booking.booking_date }}</td>
                 <td> {{ booking.status }} </td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
                 <td>
                     <a href="{{ url_for('admin.update_trek', trek_id=trek.trek_id) }}">Update</a> |
                     <a href="{{ url_for('admin.delete_trek', trek_id=trek.trek_id) }}">Delete</a>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <span>
+        <p><a href='/admin/add_treks'> + Add trek</a></p>
+        <p><a href="/admin/view_all_treks">View All Treks</a></p>
+        <p><a href='/admin/search_treks'>Search trek</a></p>
+        <p><a href="{{ url_for('admin.dashboard' )}}">GO back to Dashboard</a></p>
+    </span>
+
+
+    <h3>Staff</h3>
+
+    <p>Total number of approved staff members: {{ approved_staff_members|length }} </p>
+
+    <table border = 1>
+        <tr>
+            <th>Staff ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email Address</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for member in approved_staff_members %}
+            <tr>
+                <td>{{ member.id }} </td>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td>{{ member.email }}</td>
+                <td>{{  member.status }}</td>
+                <td> 
+                    <a href="{{ url_for('admin.blacklist_user', user_id=member.id) }}">Blacklist</a> |
+                    <a href="{{ url_for('admin.assign_trek', staff_id=member.id) }}">Assign a trek</a>
+            </tr>
+        {% endfor %}
+    </table>
+
+        <p>Total number of approval pending staff members: {{ pending_staff_members|length }} </p>
+
+    <table border = 1>
+        <tr>
+            <th>Staff ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email Address</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for member in pending_staff_members %}
+            <tr>
+                <td>{{ member.id }} </td>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td>{{ member.email }}</td>
+                <td>{{  member.status }}</td>
+                <td> 
+                    <a href="{{ url_for('admin.blacklist_user', user_id = member.id )}}">Blacklist</a> 
+                    <a href="{{ url_for('admin.approve_staff', staff_id = member.id)}}">Approve Staff</a>
+                    <a href="{{ url_for('admin.assign_trek', staff_id=member.id) }}">Assign a trek</a>
+                    <a href="{{ url_for('admin.view_staff_treks', staff_id = member.id)}}">View Assigned Treks</a>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <span>
+        <p><a href="/admin/view_all_staff">View All Staff</a></p>
+        <p><a href='/admin/search_staff'>Search Staff</a></p>
+        <p><a href="{{ url_for('admin.dashboard' )}}">GO back to Dashboard</a></p>
+    </span>
+
+
+    <h3>Users</h3>
+
+
+    <p>Total number of users registered: {{ users|length }} </p>
+
+    <table border = 1>
+        <tr>
+            <th>User ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email Address</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for member in users %}
+            <tr>
+                <td>{{ member.id }} </td>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td>{{ member.email }}</td>
+                <td> 
+                    <a href="{{ url_for('admin.blacklist_user', user_id=member.id) }}">Blacklist</a> 
+            </tr>
+        {% endfor %}
+    </table>
+
+    <span>
+        <p><a href="/admin/view_all_users">View All Users</a></p>
+        <p><a href='/admin/search_users'>Search User</a></p>
+        <p><a href="{{ url_for('admin.dashboard')}}">Go back to Dashboard</a></p>
+    </span>
+
+    <h3>Blacklisted Users</h3>
+
+    <p>Total number of users and staff blacklisted: {{ blacklisted|length }} </p>
+
+    <table border = 1>
+        <tr>
+            <th>User ID</th>
+            <th>Role</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email Address</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for member in blacklisted %}
+            <tr>
+                <td>{{ member.id }} </td>
+                <td> {% for role in member.roles %}
+                        {{ role.name }}
+                    {% endfor %} </td>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td>{{ member.email }}</td>
+                <td> 
+                    <a href="{{ url_for('admin.allowlist_user', user_id=member.id) }}">Allowlist</a> 
             </tr>
         {% endfor %}
     </table>

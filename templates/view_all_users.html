@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Users</title>
+</head>
+<body>
+    <h1>All Users</h1>
+
+    <p>Total number of users registered: {{ data|length }} </p>
+
+    <table border = 1>
+        <tr>
+            <th>User ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email Address</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for member in data %}
+            <tr>
+                <td>{{ member.id }} </td>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td>{{ member.email }}</td>
+                <td> 
+                    <a href="{{ url_for('admin.blacklist_user', user_id=member.id) }}">Blacklist</a> 
+            </tr>
+        {% endfor %}
+    </table>
+
+    <span>
+        <p><a href='/admin/search_users'>Search User</a></p>
+        <p><a href="{{ url_for('admin.dashboard')}}">Go back to Dashboard</a></p>
+    </span>
+
+    
+</body>
+</html>

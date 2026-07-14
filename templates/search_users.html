@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search treks</title>
+</head>
+<body>
+    <form method="GET" action="{{ url_for('admin.search_users') }}">
+    <input
+        type="text"
+        name="search"
+        placeholder="Search ... "
+        value="{{ request.args.get('search', '') }}"
+    >
+    <button type="submit">Search</button>
+
+    <h3>Users</h3>
+
+
+    <table border = 1>
+        <tr>
+            <th>User ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email Address</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for member in data %}
+            <tr>
+                <td>{{ member.id }} </td>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td>{{ member.email }}</td>
+                <td> 
+                    <a href="{{ url_for('admin.blacklist_user', user_id=member.id) }}">Blacklist</a> 
+            </tr>
+        {% endfor %}
+    </table>
+
+
+    <p><a href="/admin/dashboard">View All Users</a></p>
+</form>
+</body>
+</html>

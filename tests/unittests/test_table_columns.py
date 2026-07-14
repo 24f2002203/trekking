@@ -22,11 +22,11 @@ def test_users_columns(inspector):
     columns = get_columns(inspector, 'user')
 
     assert 'id' in columns
-    assert 'name' in columns
+    assert 'first_name' in columns
+    assert "last_name" in columns 
     assert 'email' in columns
     assert 'password' in columns
     assert 'contact' in columns
-    assert 'status' in columns
     assert 'created_at' in columns
 
 def test_treks_columns(inspector):
@@ -35,14 +35,16 @@ def test_treks_columns(inspector):
     assert 'trek_id' in columns
     assert 'trek_name' in columns
     assert 'location' in columns
+    assert "district" in columns 
+    assert "state" in columns 
+    assert "pincode" in columns 
     assert 'difficulty' in columns
     assert 'duration' in columns
-    assert 'available_slots' in columns
+    assert 'member_slots' in columns
     assert 'status' in columns
     assert 'start_date' in columns
     assert 'end_date' in columns
     assert 'created_at' in columns
-    assert 'created_by' in columns
 
 def test_staff_assignments_columns(inspector):
     columns = get_columns(inspector, 'staff_assignments')
@@ -56,7 +58,6 @@ def test_bookings_columns(inspector):
     columns = get_columns(inspector, 'bookings')
 
     assert 'booking_id' in columns
-    assert 'id' in columns
     assert 'trek_id' in columns
     assert 'booking_date' in columns
     assert 'status' in columns

@@ -27,10 +27,11 @@ def create_admin_account(user_datastore):
     if not existing_admin: 
 
         admin_user = User(
-            name = 'Admin_user', 
+            first_name = 'Admin_user', 
             email = 'admin@gmail.com',
             password = hash_password('admin1234'),
             contact = '1234567890', 
+            status = 'approved',
             created_at = datetime.now(UTC),
             fs_uniquifier = str(uuid.uuid4())
         )

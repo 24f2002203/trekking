@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search treks</title>
+</head>
+<body>
+    <form method="GET" action="{{ url_for('admin.search_treks') }}">
+    <input
+        type="text"
+        name="search"
+        placeholder="Search ... "
+        value="{{ request.args.get('search', '') }}"
+    >
+    <button type="submit">Search</button>
+
+    <h3>Treks</h3>
+
+    <table border = 1>
+        <tr>
+            <th>Trek ID</th>
+            <th>Trek Name</th>
+            <th>Location</th>
+            <th>Difficulty</th>
+            <th>Duration</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Trek Status</th>
+            <th>Booking date</th>
+            <th>Booking Status</th>
+            <th>Assigned Staff</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for trek, booking, staff_assignment, user in data %}
+            <tr>
+                <td>{{ trek.trek_id }} </td>
+                <td>{{ trek.trek_name }}</td>
+                <td>{{ trek.location }}</td>
+                <td>{{ trek.difficulty }}</td>
+                <td>{{ trek.duration }}</td>
+                <td> {{ trek.start_date }} </td>
+                <td> {{ trek.end_date }} </td>
+                <td>{{ trek.status }}</td>
+                <td>{{ booking.booking_date }}</td>
+                <td> {{ booking.status }} </td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                <td>
+                    <a href="{{ url_for('admin.update_trek', trek_id=trek.trek_id) }}">Update</a> |
+                    <a href="{{ url_for('admin.delete_trek', trek_id=trek.trek_id) }}">Delete</a>
+            </tr>
+        {% endfor %}
+    </table>
+
+        <p><a href="/admin/dashboard">View All</a></p>
+</form>
+</body>
+</html>

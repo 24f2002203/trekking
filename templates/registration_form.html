@@ -11,11 +11,13 @@
         {{ form.hidden_tag() }}
 
         <p>
-            {{ form.name.label }} 
-            {{ form.name(size=32) }} 
-            {% for error in form.name.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
+            {{ form.first_name.label }} 
+            {{ form.first_name(size=32) }} 
+        </p>
+
+        <p>
+            {{ form.last_name.label }} 
+            {{ form.last_name(size=32) }} 
         </p>
 
         <p>

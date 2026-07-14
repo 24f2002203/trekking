@@ -9,11 +9,12 @@ roles_users = db.Table(
 db.Column("user_id", db.Integer(), db.ForeignKey("user.id")),
 db.Column("role_id", db.Integer(), db.ForeignKey("role.id"))
 )
-
+    
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
-    name = db.Column(db.String(100), nullable=False)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=True)
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     email = db.Column(db.String(100), nullable=False, unique=True)#why 100?
     password = db.Column(db.String(225), nullable=False)
@@ -21,6 +22,7 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime(), nullable=False)
     fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False, default=lambda:str(uuid.uuid4()))
     active = db.Column(db.Boolean(), default=True) 
+    status = db.Column(db.String(), nullable=False, default='pending')
 
     roles = db.relationship(
         "Role",
@@ -63,7 +65,7 @@ class StaffAssignments(db.Model):
     assignment_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     staff_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False, unique=True)
     trek_id = db.Column(db.Integer(), db.ForeignKey('treks.trek_id'), nullable=False, unique=True)
-    assigned_at = db.Column(db.DateTime(), nullable=False, default=datetime.now(UTC))
+    assigned_at = db.Column(db.DateTime(), nullable=True, default=datetime.now(UTC))
 
 class Bookings(db.Model):
     __tablename__ = 'bookings'

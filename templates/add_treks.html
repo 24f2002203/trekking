@@ -70,6 +70,22 @@
             {{ form.end_date(size=32) }}
         </p>
 
+        <p> Please enter the assigned staff member's details: </p>
+
+        <p> 
+            {{ form.staff_first_name.label }}
+            {{ form.staff_first_name(size=32)}}
+        </p>
+
+        <p> 
+            {{ form.staff_last_name.label }}
+            {{ form.staff_last_name(size=32)}}
+        </p>
+
+        <p> 
+            {{ form.staff_email.label }}
+            {{ form.staff_email(size=32)}}
+        </p>
 
         <p>
             {{ form.submit()}}

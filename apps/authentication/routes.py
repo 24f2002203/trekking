@@ -43,8 +43,12 @@ def login():
             
             if role == 'admin': 
                 return redirect(url_for('admin.dashboard'))
-            elif role == 'staff':
+            elif role == 'staff' and user.status == 'approved':
                 return redirect(url_for('staff.dashboard'))
+            elif role == 'staff' and user.status == 'pending':
+                message = "Your account is not yet approved by the admin."
+                flash(message)
+                return render_template('login_form.html', form=form)
             elif role == 'user':
                 return redirect(url_for('user.dashboard'))
             else:
@@ -76,11 +80,17 @@ def register(role):
             if form.password.data == form.password_confirm.data: 
 
                 if len(form.password.data)>=8: 
+
+                    if role == 'user': 
+                        status = 'approved' 
+                    else: status = 'pending'
                     user = app.user_datastore.create_user(
-                        name = form.name.data, 
+                        first_name = str(form.first_name.data).title(), 
+                        last_name = str(form.last_name.data).title(),
                         email= form.email.data, 
                         password = hash_password(form.password.data),
                         contact = form.contact.data,
+                        status = status.lower(), 
                         created_at = datetime.now(UTC),
                         fs_uniquifier = str(uuid.uuid4())
                     )

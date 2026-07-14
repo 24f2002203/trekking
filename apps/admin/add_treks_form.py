@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm 
-from wtforms import StringField, IntegerField, DateField, SubmitField
+from wtforms import StringField, IntegerField, DateField, SubmitField, EmailField
+from wtforms.validators import Email
 from wtforms.validators import DataRequired
 from datetime import date, timedelta 
 
@@ -18,4 +19,7 @@ class AddTreksForm(FlaskForm):
     end_date = DateField('End Date', default = date.today() + timedelta(days=3), validators=[DataRequired()])
     booking_date = DateField('Booking Date', default = date.today, validators=[DataRequired()])
     booking_status = StringField('Booking Status', validators=[DataRequired()])
+    staff_first_name = StringField("Staff First Name")
+    staff_last_name = StringField("Staff First Name")
+    staff_email = EmailField('Email', validators=[ Email()])
     submit = SubmitField('Add Trek')

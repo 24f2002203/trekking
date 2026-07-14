@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Staff</title>
+</head>
+<body>
+    <form method="GET" action="{{ url_for('admin.search_staff') }}">
+    <input
+        type="text"
+        name="search"
+        placeholder="Search ... "
+        value="{{ request.args.get('search', '') }}"
+    >
+    <button type="submit">Search</button>
+
+   <h3>Staff</h3>
+
+    <table border = 1>
+        <tr>
+            <th>Staff ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email Address</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for member in data %}
+            <tr>
+                <td>{{ member.id }} </td>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td>{{ member.email }}</td>
+                <td>{{  member.status }}</td>
+                <td> 
+                    <a href="{{ url_for('admin.blacklist_user', user_id=member.id) }}">Blacklist</a> |
+                    <a href="{{ url_for('admin.assign_trek', staff_id=member.id) }}">Assign a trek</a>
+            </tr>
+        {% endfor %}
+    </table>
+
+        <p><a href="/admin/dashboard">View All</a></p>
+</form>
+</body>
+</html>

@@ -4,9 +4,6 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_security import SQLAlchemySessionUserDatastore
-from flask_security.models import fsqla_v3 as fsqla
-from flask_login import LoginManager
-from flask_mailman import Mail
 from database import db
 from config import LocalDevelopmentConfig, TestingConfig, LocalConfig
 from apps import register_blueprints

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Trek</title>
+</head>
+<body>
+    <h1>Assign treks to {{ staff.first_name }} {{ staff.last_name }}</h1>
+
+    <h3>Assigned Treks</h3>
+        
+    <p>Total number of assigned treks: {{ assigned_treks|length }} </p>
+
+    <table border = 1>
+        <tr>
+            <th>Trek ID</th>
+            <th>Trek Name</th>
+            <th>Location</th>
+            <th>Difficulty</th>
+            <th>Duration</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Trek Status</th>
+            <th>Assigned Staff</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for trek, assignment, staff_assigned in assigned_treks %}
+            <tr>
+                <td>{{ trek.trek_id }} </td>
+                <td>{{ trek.trek_name }}</td>
+                <td>{{ trek.location }}</td>
+                <td>{{ trek.difficulty }}</td>
+                <td>{{ trek.duration }}</td>
+                <td> {{ trek.start_date }} </td>
+                <td> {{ trek.end_date }} </td>
+                <td>{{ trek.status }}</td>
+                <td>{{ staff_assigned.first_name }} {{ staff_assigned.last_name }} </td>
+                <td>
+                    <a href="{{ url_for('admin.unassign_trek', trek_id = trek.trek_id, staff_id = staff.id)}}">Unassign</a>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Other Treks</h3>
+
+    <p>Total number of other treks: {{ other_treks|length }} </p>
+
+    <table border = 1>
+        <tr>
+            <th>Trek ID</th>
+            <th>Trek Name</th>
+            <th>Location</th>
+            <th>Difficulty</th>
+            <th>Duration</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Trek Status</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for trek in other_treks %}
+            <tr>
+                <td>{{ trek.trek_id }} </td>
+                <td>{{ trek.trek_name }}</td>
+                <td>{{ trek.location }}</td>
+                <td>{{ trek.difficulty }}</td>
+                <td>{{ trek.duration }}</td>
+                <td> {{ trek.start_date }} </td>
+                <td> {{ trek.end_date }} </td>
+                <td>{{ trek.status }}</td>
+                <td>
+                    <form method="POST">
+                        <input type="hidden" name="trek_id" value="{{ trek.trek_id }}">
+                        <button type="submit">Assign</button>
+                    </form>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <a href="{{ url_for('admin.dashboard')}}">Go to admin dashboard</a>
+</body>
+</html>
