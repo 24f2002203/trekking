@@ -74,12 +74,6 @@ class Bookings(db.Model):
     user = db.relationship("User", back_populates="bookings")
     trek = db.relationship("Treks", back_populates="bookings")
 
-class Blacklist(db.Model):
-    __tablename__ = 'blacklist'
-    blacklist_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False, unique=True)
-    reason = db.Column(db.String(255), nullable=False)
-    blacklisted_at = db.Column(db.DateTime(), nullable=False, default=datetime.now(UTC))
 
 class Role(db.Model, RoleMixin):
     __tablename__ = 'role'

@@ -51,4 +51,3 @@ Flask-Mailman==1.1.1
 Flask-Security==5.8.1
 python-dotenv==1.2.2
 argon2-cffi==25.1.0
-secrets==1.0.2

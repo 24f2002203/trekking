@@ -43,7 +43,7 @@ def create_app():
     Migrate(app, db) 
 
     with app.app_context():
-        from core.models import User, Treks, StaffAssignments, Bookings, Blacklist, Role
+        from core.models import User, Treks, StaffAssignments, Bookings, Role
         user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 
         

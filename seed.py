@@ -1,7 +1,8 @@
 from database import db 
-from app import create_app 
+from app import create_app
 from core.models import Role, User
 from flask_security.utils import hash_password 
+from flask_security import SQLAlchemySessionUserDatastore
 from datetime import datetime, UTC
 import uuid 
 
@@ -22,21 +23,21 @@ def create_default_roles(user_datastore):
 
 def create_admin_account(user_datastore): 
 
-    existing_admin = User.query.join(User.roles).filter(Role.name == 'admin').first() 
+    existing_admin = User.query.filter(User.role.has(name = 'admin')).first() 
 
     if not existing_admin: 
 
         admin_user = User(
             first_name = 'Admin_user', 
             email = 'admin@gmail.com',
-            password = hash_password('admin1234'),
+            password = ('admin1234'),
             contact = '1234567890', 
             status = 'approved',
             created_at = datetime.now(UTC),
             fs_uniquifier = str(uuid.uuid4())
         )
 
-        user_datastore.add_role_to_user(admin_user, "admin")
+        admin_user.role = Role.query.filter_by(name="admin").first()
         
         db.session.add(admin_user)
         db.session.commit()
@@ -46,7 +47,9 @@ app = create_app()
 print("Creating default roles ... ")
 
 with app.app_context():
-    create_default_roles(app.user_datastore)
-    create_admin_account(app.user_datastore)
+    user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
+
+    create_default_roles(user_datastore)
+    create_admin_account(user_datastore)
 
 print("Created Roles")
