@@ -208,7 +208,7 @@ def update_trek(trek_id):
             if value is not None and value != "":
                 setattr(trek, col, value)
         
-        if form.staff_first_name or form.staff_last_name or form.staff_email:
+        if form.staff_first_name and form.staff_last_name and form.staff_email:
             staff = User.query.filter(
                 User.first_name == form.staff_first_name.data,
                 User.last_name == form.staff_last_name.data,
