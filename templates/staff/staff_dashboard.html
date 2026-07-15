@@ -10,44 +10,59 @@
 
     <h3>Assigned Treks</h3>
 
-    <a href = "{{ url_for('staff.search_treks', staff_id = staff.id)}}">Search Treks</a>
 
     <p> Total number of assigned treks: {{ data|length }} </p>
+
+    {% if not data %}
+
+        <h4>Currently you aren't assigned treks</h4>
+
+    {% else %}
+
+         <a href = "{{ url_for('staff.search_treks', staff_id = staff.id)}}">Search Treks</a>
     
-    <table border = 1>
-        <tr>
-            <th>Trek ID</th>
-            <th>Trek Name</th>
-            <th>Location</th>
-            <th>Difficulty</th>
-            <th>Duration</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Trek Status</th>
-            <th>Booking date</th>
-            <th>Booking Status</th>
-            <th>Assigned Staff</th>
-            <th>Actions</th>
-        </tr>
-    
-        {% for trek, booking, staff_assignment, user in data %}
+        <table border = 1>
             <tr>
-                <td>{{ trek.trek_id }} </td>
-                <td>{{ trek.trek_name }}</td>
-                <td>{{ trek.location }}</td>
-                <td>{{ trek.difficulty }}</td>
-                <td>{{ trek.duration }}</td>
-                <td> {{ trek.start_date }} </td>
-                <td> {{ trek.end_date }} </td>
-                <td>{{ trek.status }}</td>
-                <td>{{ booking.booking_date }}</td>
-                <td> {{ booking.status }} </td>
-                <td>{{ user.first_name }} {{ user.last_name }}</td>
-                <td>
-                    <a href="{{ url_for('staff.update_treks', trek_id = trek.trek_id, staff_id=staff.id) }}">Update</a> | 
-                    <a href="{{ url_for('staff.view_trek_users') }}">View Users</a>
+                <th>Trek ID</th>
+                <th>Trek Name</th>
+                <th>Location</th>
+                <th>Difficulty</th>
+                <th>Duration</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Trek Status</th>
+                <th>Assigned Staff</th>
+                <th>Registered Users</th>
+                <th>Actions</th>
             </tr>
-        {% endfor %}
-    </table>
+        
+            {% for trek, staff_assignment, user, trekkers in data %}
+                <tr>
+                    <td>{{ trek.trek_id }} </td>
+                    <td>{{ trek.trek_name }}</td>
+                    <td>{{ trek.location }}</td>
+                    <td>{{ trek.difficulty }}</td>
+                    <td>{{ trek.duration }}</td>
+                    <td> {{ trek.start_date }} </td>
+                    <td> {{ trek.end_date }} </td>
+                    <td>{{ trek.status }}</td>
+                    <td>{{ trekkers }}</td>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>
+                        <a href="{{ url_for('staff.update_treks', trek_id=trek.trek_id) }}">Update</a>|
+
+                        <a href="{{ url_for('staff.view_trek_users',trek_id=trek.trek_id) }}">Users</a>|
+
+                        <a href="{{ url_for('staff.start_trek',trek_id=trek.trek_id) }}">Start</a>|
+
+                        <a href="{{ url_for('staff.ongoing_trek',trek_id=trek.trek_id) }}">Ongoing</a>|
+
+                        <a href="{{ url_for('staff.complete_trek',trek_id=trek.trek_id) }}">Complete</a>
+                        <a href="{{ url_for('staff.view_trek_users', trek_id = trek.trek_id) }}">View Users</a>
+                </tr>
+            {% endfor %}
+        </table>
+    
+    {% endif %}
 </body>
 </html>

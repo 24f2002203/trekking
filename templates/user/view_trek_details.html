@@ -3,54 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search treks</title>
+    <title>Trek Details</title>
 </head>
 <body>
-    <form method="GET" action="{{ url_for('staff.search_treks', staff_id = staff_id) }}">
-        <input
-            type="text"
-            name="search"
-            placeholder="Search ... "
-            value="{{ request.args.get('search', '') }}"
-        >
-        <button type="submit">Search</button>
-    </form>
-
-    <h3>Treks</h3>
-
     <table border = 1>
         <tr>
             <th>Trek ID</th>
             <th>Trek Name</th>
             <th>Location</th>
+            <th>District</th>
+            <th>State</th>
+            <th>Pincode</th>
             <th>Difficulty</th>
             <th>Duration</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th>Trek Status</th>
-            <th>Assigned Staff</th>
             <th>Actions</th>
         </tr>
     
-        {% for trek,staff_assignment, user in data %}
+        
             <tr>
                 <td>{{ trek.trek_id }} </td>
                 <td>{{ trek.trek_name }}</td>
                 <td>{{ trek.location }}</td>
+                <td>{{ trek.district }}</td>
+                <td>{{ trek.state }}</td>
+                <td>{{ trek.pincode }}</td>
                 <td>{{ trek.difficulty }}</td>
                 <td>{{ trek.duration }}</td>
                 <td> {{ trek.start_date }} </td>
                 <td> {{ trek.end_date }} </td>
                 <td>{{ trek.status }}</td>
-                <td>{{ user.first_name }} {{ user.last_name }}</td>
                 <td>
-                    <a href="{{ url_for('staff.update_treks', trek_id=trek.trek_id ) }}">Update</a> |
-                    <a href="{{ url_for('staff.view_trek_users', trek_id=trek.trek_id) }}">View Users</a>
+                    <button><a href="{{ url_for('user.book_trek', trek_id = trek.trek_id)}}">Book Trek</a> </button>
+                </td>
             </tr>
-        {% endfor %}
+        
     </table>
 
-        <p><a href="{{ url_for('staff.dashboard', staff_id = staff_id ) }} ">Go back to dashboard</a></p>
-
+    <p><a href="{{ url_for('user.dashboard', user_id = user_id ) }} ">Go back to dashboard</a></p>
 </body>
 </html>
+
+
+
+|
+

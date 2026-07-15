@@ -40,6 +40,9 @@
                     <a href="{{ url_for('admin.update_trek', trek_id=trek.trek_id) }}">Update</a> |
                     <a href="{{ url_for('admin.delete_trek', trek_id=trek.trek_id) }}">Delete</a> | 
                     <a href="{{ url_for('admin.view_trek_users', trek_id = trek.trek_id)}}">View Users</a>
+                    {% if user.first_name %}
+                        <a href="{{ url_for('admin.unassign_trek', trek_id = trek.trek_id, staff_id = user.id)}}">Unassign Staff</a>
+                    {% endif %}
             </tr>
         {% endfor %}
     </table>

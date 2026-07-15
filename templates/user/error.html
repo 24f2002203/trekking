@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blacklisted</title>
+    <title>Error</title>
 </head>
 <body>
-    <h1>Your account has been blacklisted by the admin, you cannot access the website</h1>
+    <h3> {{ message }}</h3>
+    <p><a href="{{ url_for('staff.dashboard', staff_id=staff_id)}}"">Go back to dashboard</a></p>
 </body>
 </html>

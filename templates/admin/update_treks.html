@@ -75,17 +75,17 @@
 
         <p> 
             {{ form.staff_first_name.label }}
-            {{ form.staff_first_name(size=32)}}
+            {{ form.staff_first_name(size=32, placeholder=staff.first_name if staff else "No staff assigned")}}
         </p>
 
         <p> 
             {{ form.staff_last_name.label }}
-            {{ form.staff_last_name(size=32)}}
+            {{ form.staff_last_name(size=32, placeholder=staff.last_name if staff else "No staff assigned")}}
         </p>
 
         <p> 
             {{ form.staff_email.label }}
-            {{ form.staff_email(size=32)}}
+            {{ form.staff_email(size=32, placeholder=staff.email if staff else "No staff assigned")}}
         </p>
 
         <p>

@@ -41,6 +41,9 @@
                     <a href="{{ url_for('admin.update_trek', trek_id=trek.trek_id) }}">Update</a> |
                     <a href="{{ url_for('admin.delete_trek', trek_id=trek.trek_id) }}">Delete</a> | 
                     <a href="{{ url_for('admin.view_trek_users', trek_id = trek.trek_id)}}">View Users</a>
+                    {% if user.first_name %}
+                        <a href="{{ url_for('admin.unassign_trek', trek_id = trek.trek_id, staff_id = user.id)}}">Unassign Staff</a>
+                    {% endif %}
             </tr>
         {% endfor %}
     </table>
@@ -148,6 +151,66 @@
         <p><a href='/admin/search_users'>Search User</a></p>
         <p><a href="{{ url_for('admin.dashboard')}}">Go back to Dashboard</a></p>
     </span>
+
+    <h3>Booking Records</h3>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>User</th>
+                <th>Trek</th>
+                <th>Booking Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for booking, user, trek in booking_records %}
+        <tr>
+            <td>{{ booking.booking_id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ trek.trek_name }}</td>
+            <td>{{ booking.booking_date.strftime("%d-%m-%Y") }}</td>
+            <td>{{ booking.status }}</td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+    <h3>Completed Trek History</h3>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>User</th>
+                <th>Trek</th>
+                <th>Completed On</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for booking, user, trek in trek_history %}
+        <tr>
+            <td>{{ booking.booking_id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ trek.trek_name }}</td>
+            <td>
+                {% if booking.completion_date %}
+                    {{ booking.completion_date.strftime("%d-%m-%Y") }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
 
     <h3>Blacklisted Users</h3>
 

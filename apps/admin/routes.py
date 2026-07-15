@@ -34,12 +34,29 @@ def dashboard():
     approved_staff_members = User.query.join(User.role).filter(Role.name == "staff", User.status == 'approved').all()
     blacklisted = User.query.filter(User.status=='blacklisted').all()
     users = User.query.join(User.role).filter(Role.name == "user", User.status == 'approved').all()
+    booking_records = (
+        db.session.query(Bookings, User, Treks)
+        .join(User, Bookings.user_id == User.id)
+        .join(Treks, Bookings.trek_id == Treks.trek_id)
+        .order_by(Bookings.booking_date.desc())
+        .all()
+    )
+    trek_history = (
+        db.session.query(Bookings, User, Treks)
+        .join(User, Bookings.user_id == User.id)
+        .join(Treks, Bookings.trek_id == Treks.trek_id)
+        .filter(Bookings.status == "Completed")
+        .order_by(Bookings.completion_date.desc())
+        .all()
+    )
 
     return render_template('admin/admin_dashboard.html', 
                            data = data, 
                            pending_staff_members = pending_staff_members, 
                            approved_staff_members = approved_staff_members, 
                            blacklisted = blacklisted, 
+                           booking_records = booking_records,
+                           trek_history = trek_history,
                            users = users)
 
 @blueprint.route('/view_all_treks')
@@ -101,7 +118,7 @@ def view_trek_users(trek_id):
 
     data = data.order_by(U.id.asc()).all()
 
-    trek = Treks.query.filter_by(trek_id == trek_id).first()
+    trek = Treks.query.filter_by(trek_id = trek_id).first()
 
     staff = (
         db.session.query(U)
@@ -135,6 +152,7 @@ def add_treks():
                 difficulty = form.difficulty.data.lower(),
                 duration = form.duration.data,
                 member_slots = form.member_slots.data,
+                available_member_slots = form.member_slots.data,
                 status = form.status.data.lower(),
                 start_date = (form.start_date.data),
                 end_date = (form.end_date.data),
@@ -171,12 +189,14 @@ def update_trek(trek_id):
 
     trek = Treks.query.filter(Treks.trek_id == trek_id).first()
     staff_assignment = StaffAssignments.query.filter(StaffAssignments.trek_id == trek_id).first()
-
+    staff = None
+    if staff_assignment:
+        staff = User.query.get(staff_assignment.staff_id)
     form = UpdateTreksForm(obj=trek)
 
     if request.method == 'GET': 
         
-        return render_template('admin/update_treks.html', form = form, trek = trek)
+        return render_template('admin/update_treks.html', form = form, trek = trek, staff=staff)
     
     if request.method == "POST": 
 
@@ -187,34 +207,35 @@ def update_trek(trek_id):
 
             if value is not None and value != "":
                 setattr(trek, col, value)
+        
+        if form.staff_first_name or form.staff_last_name or form.staff_email:
+            staff = User.query.filter(
+                User.first_name == form.staff_first_name.data,
+                User.last_name == form.staff_last_name.data,
+                User.email == form.staff_email.data
+            ).first()
 
-        staff = User.query.filter(
-            User.first_name == form.staff_first_name.data,
-            User.last_name == form.staff_last_name.data,
-            User.email == form.staff_email.data
-        ).first()
+            if not staff:
+                message = "Staff member not found."
+                return render_template(
+                    "admin/error.html",
+                    message = message
+                )
 
-        if not staff:
-            flash("Staff member not found.", "danger")
-            return render_template(
-                "admin/update_treks.html",
-                form=form,
-                trek=trek,
-            )
+            if staff.status == "blacklisted":
+                message = "Your account has been blacklisted by the admin, you cannot access the website"
+                return render_template("admin/error.html", message = message)
 
-        if staff.status == "blacklisted":
-            return render_template("admin/blacklisted_user.html")
+            if staff_assignment:
+                staff_assignment.staff_id = staff.id
+            else:
+                staff_assignment = StaffAssignments(
+                    trek_id=trek.trek_id,
+                    staff_id=staff.id
+                )
+                db.session.add(staff_assignment)
 
-        if staff_assignment:
-            staff_assignment.staff_id = staff.id
-        else:
-            staff_assignment = StaffAssignments(
-                trek_id=trek.trek_id,
-                staff_id=staff.id
-            )
-            db.session.add(staff_assignment)
-
-        db.session.commit()
+            db.session.commit()
 
         return redirect(url_for('admin.dashboard'))
 
@@ -301,7 +322,7 @@ def search_users():
     search = request.args.get("search", "")
 
     query = User.query.filter(
-        User.role.has(name = "staff")
+        User.role.has(name = "user")
     )
 
     if search:
@@ -358,7 +379,9 @@ def assign_trek(staff_id):
         db.session.commit()
 
         assigned_treks = (
-            Treks.query
+            db.session.query(Treks, StaffAssignments, User)
+            .outerjoin(StaffAssignments, Treks.trek_id == StaffAssignments.trek_id)
+            .outerjoin(User, StaffAssignments.staff_id == User.id)
             .filter(StaffAssignments.staff_id == staff_id)
             .all()
         )
@@ -373,13 +396,23 @@ def assign_trek(staff_id):
         )
         return render_template('admin/assign_staff_to_trek.html', assigned_treks = assigned_treks, other_treks = other_treks, staff=staff)
     
-@blueprint.route('/unassign_trek/<int:staff_id>/<int:trek_id>', methods = ['GET', 'POST'])
+@blueprint.route('/unassign_trek/<int:staff_id>/<int:trek_id>')
 def unassign_trek(staff_id, trek_id):
 
-    assignment = StaffAssignments.query.filter(StaffAssignments.staff_id == staff_id, StaffAssignments.trek_id == trek_id).first()
+    assignment = StaffAssignments.query.filter_by(
+        staff_id=staff_id,
+        trek_id=trek_id
+    ).first()
+
+    if assignment is None:
+        flash("Assignment not found.")
+        return redirect(url_for('admin.assign_trek', staff_id=staff_id))
+
     db.session.delete(assignment)
     db.session.commit()
-    return redirect(url_for('admin.assign_trek', staff_id = staff_id))
+
+    flash("Trek unassigned successfully.")
+    return redirect(url_for('admin.assign_trek', staff_id=staff_id))
 
     
 @blueprint.route('/approve_staff/<int:staff_id>', methods = ['GET', 'POST'])

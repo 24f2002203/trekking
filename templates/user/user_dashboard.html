@@ -6,6 +6,110 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <h1>User Dashboard</h1>
+    <h2>welcome {{ user.first_name }} {{ user.last_name }}</h2>
+
+    <h3>Currently open treks</h3>
+
+    <p>Total number of treks: {{ data|length }} </p>
+
+    <table border = 1>
+        <tr>
+            <th>Trek ID</th>
+            <th>Trek Name</th>
+            <th>Location</th>
+            <th>Trek Status</th>
+            <th>Actions</th>
+        </tr>
+    
+        {% for trek in data %}
+            <tr>
+                <td>{{ trek.trek_id }} </td>
+                <td>{{ trek.trek_name }}</td>
+                <td>{{ trek.location }}</td>
+                <td>{{ trek.status }}</td>
+                <td>
+                    <a href="{{ url_for('user.view_trek_details', trek_id = trek.trek_id)}}">View Details to book</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h3>My Bookings</h3>
+
+    {% if not booking_data %}
+        <p>You currently have no bookings</p>
+
+    {% else %}
+
+        <table border="1">
+            <tr> 
+                <th>Booking ID</th>
+                <th>Trek ID</th>
+                <th>Trek Name</th>
+                <th>Trek Location</th>
+                <th>Trek Start Date</th>
+                <th>Trek End Date</th>
+                <th>Trek Status</th>
+                <th>Booking Status</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for trek, booking in booking_data %}
+                <tr>
+                    <td>{{ booking.booking_id }}</td>
+                    <td>{{ trek.trek_id }}</td>
+                    <td>{{ trek.trek_name }}</td>
+                    <td>{{ trek.location }}</td>
+                    <td>{{ trek.start_date }}</td>
+                    <td>{{ trek.end_date }}</td>
+                    <td>{{ trek.status }}</td>
+                    <td>{{ booking.booking_status }}</td>
+                    <td>
+                        <a href="{{ url_for('user.cancel_booking', booking_id=booking.booking_id) }}">
+                            Cancel Booking
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+        </table>
+
+    {% endif %}
+
+
+    <h3>Trekking_history</h3>
+
+    {% if not history %}
+        <p>You currently have no trekking history</p>
+
+    {% else %}
+
+        <table border="1">
+            <tr> 
+                <th>Booking ID</th>
+                <th>Trek ID</th>
+                <th>Trek Name</th>
+                <th>Trek Location</th>
+                <th>Trek Start Date</th>
+                <th>Booking Date</th>
+                <th>Trek Completion Date</th>
+                <th>Trek Status</th>
+            </tr>
+
+            {% for trek, booking in booking_data %}
+                <tr>
+                    <td>{{ booking.booking_id }}</td>
+                    <td>{{ trek.trek_id }}</td>
+                    <td>{{ trek.trek_name }}</td>
+                    <td>{{ trek.location }}</td>
+                    <td>{{ trek.start_date }}</td>
+                    <td>{{ booking.booking_date }}</td>
+                    <td>{{ booking.completion_date }}</td>
+                    <td>{{ trek.status }}</td>
+
+                </tr>
+                {% endfor %}
+        </table>
+
+    {% endif %}
 </body>
 </html>
