@@ -1,0 +1,366 @@
+openapi: 3.0.3
+
+info:
+  title: Trek Management System API
+  description: |
+    API documentation for the Trek Management System.
+
+    Roles:
+      - Admin
+      - Staff
+      - User
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000
+
+tags:
+  - name: Admin
+  - name: Staff
+  - name: User
+
+paths:
+
+  ##################################
+  ## ADMIN ROUTES
+  ##################################
+
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: View admin dashboard
+      responses:
+        '200':
+          description: Dashboard displayed successfully
+
+  /admin/view_all_treks:
+    get:
+      tags:
+        - Admin
+      summary: View all treks
+
+  /admin/view_all_staff:
+    get:
+      tags:
+        - Admin
+      summary: View all staff
+
+  /admin/view_all_users:
+    get:
+      tags:
+        - Admin
+      summary: View all users
+
+  /admin/view_trek_users/{trek_id}:
+    get:
+      tags:
+        - Admin
+      summary: View users registered for a trek
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+  /admin/add_treks:
+    get:
+      tags:
+        - Admin
+      summary: Display add trek form
+
+    post:
+      tags:
+        - Admin
+      summary: Create a new trek
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                trek_name:
+                  type: string
+                location:
+                  type: string
+                district:
+                  type: string
+                state:
+                  type: string
+                pincode:
+                  type: string
+                difficulty:
+                  type: string
+                duration:
+                  type: integer
+                member_slots:
+                  type: integer
+                status:
+                  type: string
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
+
+  /admin/update_trek/{trek_id}:
+    get:
+      tags:
+        - Admin
+      summary: Display update trek form
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+    post:
+      tags:
+        - Admin
+      summary: Update trek details
+
+  /admin/delete_trek/{trek_id}:
+    get:
+      tags:
+        - Admin
+      summary: Delete a trek
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+  /admin/search_treks:
+    get:
+      tags:
+        - Admin
+      summary: Search treks
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+
+  /admin/search_staff:
+    get:
+      tags:
+        - Admin
+      summary: Search staff
+
+  /admin/search_users:
+    get:
+      tags:
+        - Admin
+      summary: Search users
+
+  /admin/assign_trek/{staff_id}:
+    get:
+      tags:
+        - Admin
+      summary: Show trek assignment page
+      parameters:
+        - name: staff_id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+    post:
+      tags:
+        - Admin
+      summary: Assign trek to staff
+
+  /admin/unassign_trek/{staff_id}/{trek_id}:
+    get:
+      tags:
+        - Admin
+      summary: Remove trek assignment
+
+  /admin/approve_staff/{staff_id}:
+    get:
+      tags:
+        - Admin
+      summary: Approve staff member
+
+  /admin/view_staff_treks/{staff_id}:
+    get:
+      tags:
+        - Admin
+      summary: View treks assigned to a staff member
+
+  /admin/blacklist_user/{user_id}:
+    get:
+      tags:
+        - Admin
+      summary: Blacklist a user
+
+  /admin/allowlist_user/{user_id}:
+    get:
+      tags:
+        - Admin
+      summary: Remove user from blacklist
+
+  ##################################
+  ## STAFF ROUTES
+  ##################################
+
+  /staff/dashboard:
+    get:
+      tags:
+        - Staff
+      summary: Staff dashboard
+
+  /staff/update_treks/{trek_id}:
+    get:
+      tags:
+        - Staff
+      summary: Display trek update form
+
+    post:
+      tags:
+        - Staff
+      summary: Update assigned trek
+
+  /staff/view_trek_users/{trek_id}:
+    get:
+      tags:
+        - Staff
+      summary: View participants of assigned trek
+
+  /staff/start_trek/{trek_id}:
+    get:
+      tags:
+        - Staff
+      summary: Mark trek as Started
+
+  /staff/ongoing_trek/{trek_id}:
+    get:
+      tags:
+        - Staff
+      summary: Mark trek as Ongoing
+
+  /staff/complete_trek/{trek_id}:
+    get:
+      tags:
+        - Staff
+      summary: Complete trek and update bookings
+
+  /staff/remove_participant/{booking_id}:
+    get:
+      tags:
+        - Staff
+      summary: Remove participant from trek
+
+  /staff/search_treks:
+    get:
+      tags:
+        - Staff
+      summary: Search assigned treks
+
+  ##################################
+  ## USER ROUTES
+  ##################################
+
+  /user/dashboard:
+    get:
+      tags:
+        - User
+      summary: User dashboard
+
+  /user/view_trek_details/{trek_id}:
+    get:
+      tags:
+        - User
+      summary: View trek details
+
+  /user/book_trek/{trek_id}:
+    get:
+      tags:
+        - User
+      summary: Book a trek
+
+  /user/cancel_booking/{booking_id}:
+    get:
+      tags:
+        - User
+      summary: Cancel trek booking
+
+components:
+
+  schemas:
+
+    Trek:
+      type: object
+      properties:
+        trek_id:
+          type: integer
+        trek_name:
+          type: string
+        location:
+          type: string
+        difficulty:
+          type: string
+        duration:
+          type: integer
+        member_slots:
+          type: integer
+        available_member_slots:
+          type: integer
+        status:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        status:
+          type: string
+
+    Booking:
+      type: object
+      properties:
+        booking_id:
+          type: integer
+        user_id:
+          type: integer
+        trek_id:
+          type: integer
+        status:
+          type: string
+        booking_date:
+          type: string
+          format: date-time
+        completion_date:
+          type: string
+          format: date-time
+
+    StaffAssignment:
+      type: object
+      properties:
+        assignment_id:
+          type: integer
+        staff_id:
+          type: integer
+        trek_id:
+          type: integer
+        assigned_at:
+          type: string
+          format: date
