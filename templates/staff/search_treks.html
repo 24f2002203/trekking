@@ -6,7 +6,7 @@
     <title>Search treks</title>
 </head>
 <body>
-    <form method="GET" action="{{ url_for('admin.search_treks') }}">
+    <form method="GET" action="{{ url_for('staff.search_treks', staff_id = staff_id) }}">
     <input
         type="text"
         name="search"
@@ -47,13 +47,13 @@
                 <td> {{ booking.status }} </td>
                 <td>{{ user.first_name }} {{ user.last_name }}</td>
                 <td>
-                    <a href="{{ url_for('admin.update_trek', trek_id=trek.trek_id) }}">Update</a> |
-                    <a href="{{ url_for('admin.delete_trek', trek_id=trek.trek_id) }}">Delete</a>
+                    <a href="{{ url_for('staff.update_trek', staff_id=staff_id) }}">Update</a> |
+                    <a href="{{ url_for('staff.view_trek_users') }}">View Users</a>
             </tr>
         {% endfor %}
     </table>
 
-        <p><a href="/admin/dashboard">View All</a></p>
+        <p><a href="{{ url_for('staff.dashboard', staff_id = staff_id ) }} ">Go back to dashboard</a></p>
 </form>
 </body>
 </html>

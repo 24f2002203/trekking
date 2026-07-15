@@ -20,13 +20,11 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th>Trek Status</th>
-            <th>Booking date</th>
-            <th>Booking Status</th>
-            <th>Assigned Staff</th>
+            <th>Created On</th>
             <th>Actions</th>
         </tr>
     
-        {% for trek, booking, staff_assignment, user in data %}
+        {% for trek, staff_assignment, user in data %}
             <tr>
                 <td>{{ trek.trek_id }} </td>
                 <td>{{ trek.trek_name }}</td>
@@ -36,12 +34,12 @@
                 <td> {{ trek.start_date }} </td>
                 <td> {{ trek.end_date }} </td>
                 <td>{{ trek.status }}</td>
-                <td>{{ booking.booking_date }}</td>
-                <td> {{ booking.status }} </td>
+                <td>{{ trek.created_at }}</td>
                 <td>{{ user.first_name }} {{ user.last_name }}</td>
                 <td>
                     <a href="{{ url_for('admin.update_trek', trek_id=trek.trek_id) }}">Update</a> |
-                    <a href="{{ url_for('admin.delete_trek', trek_id=trek.trek_id) }}">Delete</a>
+                    <a href="{{ url_for('admin.delete_trek', trek_id=trek.trek_id) }}">Delete</a> | 
+                    <a href="{{ url_for('admin.view_trek_users', trek_id = trek.trek_id)}}">View Users</a>
             </tr>
         {% endfor %}
     </table>

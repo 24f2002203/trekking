@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Registered</title>
+</head>
+<body>
+    <h3> Users Registered in {{ trek.trek_name }}  which starts on {{ trek.trek_start_data }} </h3>
+
+    <h4>Trek details:</h4>
+
+    <table border = 1>
+        <tr>
+            <th>Trek ID</th>
+            <th>Trek Name</th>
+            <th>Location</th>
+            <th>Difficulty</th>
+            <th>Duration</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Trek Status</th>
+            <th>Assigned Staff</th>
+            <th>Actions</th>
+        </tr>
+            <tr>
+                <td>{{ trek.trek_id }} </td>
+                <td>{{ trek.trek_name }}</td>
+                <td>{{ trek.location }}</td>
+                <td>{{ trek.difficulty }}</td>
+                <td>{{ trek.duration }}</td>
+                <td> {{ trek.start_date }} </td>
+                <td> {{ trek.end_date }} </td>
+                <td>{{ trek.status }}</td>
+                <td>{{ staff.first_name }} {{ staff.last_name }}</td>
+                <td>
+                    <a href="{{ url_for('admin.update_trek', trek_id=trek.trek_id) }}">Update</a> 
+            </tr>
+
+    </table>
+
+    <table border="1">
+        <tr>
+            <th>User ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>Booking Date</th>
+            <th>Booking Status</th>
+        </tr>
+
+        {% for trek, booking, user in data %}
+
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.contact }}</td>
+                <td>{{ booking.booking_date }}</td>
+                <td>{{ booking.booking_status }}</td>
+            </tr>
+
+        {% endfor %}
+    </table>
+
+    <p><a href="/admin/dashboard">Go to Dashboard</a></p>
+</body>
+</html>

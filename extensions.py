@@ -7,5 +7,5 @@ from flask_security import Security
         storage_uri = "memory://"
     )'''
 
-security = Security()
+
 
